@@ -1,5 +1,6 @@
 package cl.miempresa.accesos.principal;
 
+import java.util.List;
 import java.util.logging.Logger;
 
 import org.eclipse.jface.action.MenuManager;
@@ -215,7 +216,9 @@ public class ArbolEdificio extends ViewPart {
 		traza.info("Dibujando el arbol del edificio");
 		EdificioDAO edao = new EdificioDAO();
 		TreeEdificio todoArbol = new TreeEdificio();
-		
+		List<Edificio> edificios = edao.findAll();
+		if(edificios.isEmpty())
+			return null;
 		Edificio elEdificio = edao.findAll().get(0);
 
 		Edificio[] edificio = new Edificio[1];

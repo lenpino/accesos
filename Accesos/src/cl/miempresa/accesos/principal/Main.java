@@ -280,6 +280,8 @@ public class Main {
 			  System.out.println("Ok pressed");
 			} else {
 			  System.out.println("Cancel pressed");
+			  shlGestion.dispose();
+			  System.exit(0);
 			}
 		} else {
 			LOGGER.info("Existe edificio");

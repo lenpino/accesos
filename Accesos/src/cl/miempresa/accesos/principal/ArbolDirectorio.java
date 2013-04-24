@@ -111,6 +111,8 @@ public class ArbolDirectorio extends ViewPart {
 		
 		List<Directorio> listaDirectorio = ddao.findAll();
 		traza.info("Rescata el primer directorio que encuentra");
+		if(listaDirectorio.isEmpty())
+			return null;
 		unDirectorio = listaDirectorio.get(0);
 		//Entrega al objeto arbol un arreglo de 1 elemento con el directorio encontrado
 		Directorio[] eldirectorio = new Directorio[1];
