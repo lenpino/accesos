@@ -38,6 +38,7 @@ import cl.altair.acceso.dao.RegionDAO;
 import cl.altair.acceso.dao.TipoDependenciaDAO;
 import cl.altair.acceso.modelo.Edificio;
 import cl.altair.accesos.principal.formularios.ConfiguraEdificio;
+import cl.altair.accesos.principal.formularios.Ingreso;
 import cl.altair.accesos.principal.formularios.NewDependencia;
 import cl.altair.accesos.wizard.UsuarioInmueble.WizardUsuarioInmueble;
 import cl.altair.accesos.wizard.edificio.WizardEdificio;
@@ -264,6 +265,8 @@ public class Main {
 	private void init(){
 		EdificioDAO edao = new EdificioDAO();
 		List<Edificio> lista = edao.findAll();		
+		Ingreso dialogoLogin = new Ingreso(shlGestion);
+		dialogoLogin.open();
 		if(lista.size() == 0){
 			LOGGER.info("No existe edificio");
 			//Creacion de los datos basicos para la operacion de la aplicacion

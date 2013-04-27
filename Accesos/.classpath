@@ -25,5 +25,8 @@
 	<classpathentry kind="lib" path="/Users/Len/desarrollo/JavaLibs/purejavacomm-0.0.16.jar"/>
 	<classpathentry kind="lib" path="/Users/Len/desarrollo/JavaLibs/jna-3.5.1.jar"/>
 	<classpathentry kind="lib" path="/Users/Len/desarrollo/JavaLibs/commons-validator-1.4.0/commons-validator-1.4.0.jar"/>
+	<classpathentry kind="lib" path="/Users/Len/desarrollo/JavaLibs/httpcomponents-client-4.2.5/lib/httpclient-4.2.5.jar"/>
+	<classpathentry kind="lib" path="/Users/Len/desarrollo/JavaLibs/httpcomponents-client-4.2.5/lib/httpcore-4.2.4.jar"/>
+	<classpathentry kind="lib" path="/Users/Len/desarrollo/JavaLibs/httpcomponents-client-4.2.5/lib/commons-logging-1.1.1.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
