@@ -73,7 +73,7 @@ public class InfoRegistro {
 				XPathExpression pwd = xpath.compile("//ref/text()");
 				clave = (String)pwd.evaluate(resp, XPathConstants.STRING);
 				
-				XPathExpression serial = xpath.compile("//refid/text()"); 
+				XPathExpression serial = xpath.compile("//serial/text()"); 
 				serie = (String)serial.evaluate(resp, XPathConstants.STRING);
 				
 				XPathExpression version = xpath.compile("//version/text()"); 
