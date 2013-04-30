@@ -4,6 +4,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.StringReader;
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
 import java.util.logging.Logger;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -26,10 +28,11 @@ import org.xml.sax.SAXException;
 public class InfoRegistro {
 	private static String clave;
 	private static String serie;
+	private static String ver;
 	private String HOST_NAME;
 	private final static Logger LOGGER = Logger.getLogger(InfoRegistro.class.getName());
     public static void main(String[] args) throws ClientProtocolException, IOException {
-    	InfoRegistro.getInfoRegistro("lenpino@gmail.com");
+    	InfoRegistro.getInfoRegistro("lenpino@gmail.com","123456");
     }
     
     public static Document creaRespXML(String xml) {
@@ -46,7 +49,7 @@ public class InfoRegistro {
 	    return null;
     }
 
-    public static void getInfoRegistro(String email) throws IOException{
+    public static void getInfoRegistro(String email, String password) throws IOException{
         try {
 			HttpClient client = new DefaultHttpClient();
 			HttpGet request = new HttpGet("http://localhost:8090/sia/rest-services/usuario/cliente/" + email);
@@ -72,9 +75,24 @@ public class InfoRegistro {
 				
 				XPathExpression serial = xpath.compile("//refid/text()"); 
 				serie = (String)serial.evaluate(resp, XPathConstants.STRING);
+				
+				XPathExpression version = xpath.compile("//version/text()"); 
+				ver = (String)version.evaluate(resp, XPathConstants.STRING);
 	
 				LOGGER.info("CLAVE = " + clave);
 				LOGGER.info("SERIE = " + serie);
+				LOGGER.info("VERSION = " + ver);
+				
+				//Valida la clave local versus la del portal
+		    	if(PasswordHash.validatePassword(password, clave)){
+		    		System.out.println("CLAVES COINCIDEN");
+		    		RegistroUsr.registraUsr(email);
+		    		RegistroUsr.registraPrograma(serie, ver);
+		    	} else {
+		    		System.out.println("CLAVES NO COINCIDEN");
+		    	}
+		    	
+
 			} else {
 				XPathExpression mensaje = xpath.compile("//mensaje/text()");
 				String elMensaje = (String)mensaje.evaluate(resp, XPathConstants.STRING);
@@ -84,6 +102,12 @@ public class InfoRegistro {
 		} catch (IllegalStateException e) {
 			e.printStackTrace();
 		} catch (XPathExpressionException e) {
+			e.printStackTrace();
+		} catch (NoSuchAlgorithmException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InvalidKeySpecException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} 
     }

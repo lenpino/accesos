@@ -70,21 +70,9 @@ public class Ingreso extends Dialog {
 	    } else if(buttonId == IDialogConstants.OK_ID){
 	    	try {
 	    		//Llamando al portal
-				InfoRegistro.getInfoRegistro(usernameField.getText());
-				//Valida la clave local versus la del portal
-		    	if(PasswordHash.validatePassword(passwordField.getText(), InfoRegistro.getClave())){
-		    		System.out.println("CLAVES COINCIDEN");
-		    		RegistroUsr.registraUsr(usernameField.getText());
-		    	} else {
-		    		System.out.println("CLAVES NO COINCIDEN");
-		    	}
-		    	
+				InfoRegistro.getInfoRegistro(usernameField.getText(), passwordField.getText());
 			} catch (IOException e) {
 				System.out.println("NO TIENE CONECCION A INTERNET!!");
-			} catch (NoSuchAlgorithmException e) {
-				e.printStackTrace();
-			} catch (InvalidKeySpecException e) {
-				e.printStackTrace();
 			}
 	    	System.out.println("email = " + usernameField.getText());
 	    	
