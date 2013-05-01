@@ -29,7 +29,7 @@ public class InfoRegistro {
 	private static String clave;
 	private static String serie;
 	private static String ver;
-	private String HOST_NAME;
+	private static final String HOST_NAME = "ec2-54-244-178-197.us-west-2.compute.amazonaws.com";
 	private final static Logger LOGGER = Logger.getLogger(InfoRegistro.class.getName());
     public static void main(String[] args) throws ClientProtocolException, IOException {
     	InfoRegistro.getInfoRegistro("lenpino@gmail.com","123456");
@@ -52,7 +52,7 @@ public class InfoRegistro {
     public static void getInfoRegistro(String email, String password) throws IOException{
         try {
 			HttpClient client = new DefaultHttpClient();
-			HttpGet request = new HttpGet("http://localhost:8090/sia/rest-services/usuario/cliente/" + email);
+			HttpGet request = new HttpGet("http://" + HOST_NAME + "/sia/rest-services/usuario/cliente/" + email);
 			HttpResponse response = client.execute(request);
 			//Lee la respuesta
 			BufferedReader rd = new BufferedReader (new InputStreamReader(response.getEntity().getContent()));
