@@ -11,6 +11,7 @@ import java.util.logging.Logger;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.SWT;
@@ -33,10 +34,13 @@ import org.eclipse.wb.swt.SWTResourceManager;
 import cl.altair.acceso.dao.ComunaDAO;
 import cl.altair.acceso.dao.EdificioDAO;
 import cl.altair.acceso.dao.MotivoDAO;
+import cl.altair.acceso.dao.ProgramaDAO;
 import cl.altair.acceso.dao.ProvinciaDAO;
 import cl.altair.acceso.dao.RegionDAO;
 import cl.altair.acceso.dao.TipoDependenciaDAO;
 import cl.altair.acceso.modelo.Edificio;
+import cl.altair.acceso.modelo.Motivo;
+import cl.altair.acceso.modelo.Programa;
 import cl.altair.accesos.principal.formularios.ConfiguraEdificio;
 import cl.altair.accesos.principal.formularios.Ingreso;
 import cl.altair.accesos.principal.formularios.NewDependencia;
@@ -263,28 +267,52 @@ public class Main {
 	}
 	
 	private void init(){
-		EdificioDAO edao = new EdificioDAO();
-		List<Edificio> lista = edao.findAll();		
+		ProgramaDAO pdao = new ProgramaDAO();
+		List<Programa> listaProgramas = pdao.findAll();
+		//Si el estado del programa no es activo todo se cierra despues de mostrar un mensaje
+		if(!listaProgramas.isEmpty()){
+			Programa elPrograma = listaProgramas.get(0);
+			if(!elPrograma.getEstado().equalsIgnoreCase("activo")){
+				
+//				IStatus status=new Status(IStatus.ERROR,"Plugin ID","Ud. debe volver a activar este programa",null);
+//				ErrorDialog.openError(shlGestion, "Programa No Activo", "Este programa requiere activarse", status);
+
+				MessageBox dialog = new MessageBox(shlGestion, SWT.ICON_ERROR | SWT.OK);
+				dialog.setText("Programa inactivo");
+				dialog.setMessage("Ud. debe volver a activar este programa");
+				// open dialog and wait for user selection
+				dialog.open(); 
+				shlGestion.dispose();
+				System.exit(0);
+			}
+		}
 		Ingreso dialogoLogin = new Ingreso(shlGestion);
 		dialogoLogin.open();
+		EdificioDAO edao = new EdificioDAO();
+		MotivoDAO mdao = new MotivoDAO();
+		List<Motivo> listaMotivos = mdao.findAll();
+		List<Edificio> lista = edao.findAll();		
 		if(lista.size() == 0){
 			LOGGER.info("No existe edificio");
-			//Creacion de los datos basicos para la operacion de la aplicacion
-			MotivoDAO.creaMotivos();
-			TipoDependenciaDAO.creaTipoDependencias();
-			//Crea las regiones/provicias/comunas del pais. Necesarias para las direcciones
-			RegionDAO.creaRegiones();
-			ProvinciaDAO.creaProvicias();
-			ComunaDAO.creaComunas();
+			if(listaMotivos.size() == 0){
+				LOGGER.info("No existe informacion basica");
+				//Creacion de los datos basicos para la operacion de la aplicacion
+				MotivoDAO.creaMotivos();
+				TipoDependenciaDAO.creaTipoDependencias();
+				//Crea las regiones/provicias/comunas del pais. Necesarias para las direcciones
+				RegionDAO.creaRegiones();
+				ProvinciaDAO.creaProvicias();
+				ComunaDAO.creaComunas();
+			}
 			//Muestra wizard para cargar la informacion del edificio
 			LOGGER.fine("Abriendo wizard para crear los datos del edificio");
 			WizardDialog wizardDialog = new WizardDialog(shlGestion, new WizardEdificio());
 			if (wizardDialog.open() == Window.OK) {
-			  System.out.println("Ok pressed");
+				LOGGER.info("Ok pressed");
 			} else {
-			  System.out.println("Cancel pressed");
-			  shlGestion.dispose();
-			  System.exit(0);
+				LOGGER.info("Se cancelo el wizard, saliendo del programa");
+				shlGestion.dispose();
+				System.exit(0);
 			}
 		} else {
 			LOGGER.info("Existe edificio");
