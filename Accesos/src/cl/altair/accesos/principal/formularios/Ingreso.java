@@ -49,14 +49,14 @@ public class Ingreso extends Dialog {
 		    layout.numColumns = 2;
 
 		    Label usernameLabel = new Label(comp, SWT.RIGHT);
-		    usernameLabel.setText("Correo Electrónico: ");
+		    usernameLabel.setText("Correo Electr√≥nico: ");
 
 		    usernameField = new Text(comp, SWT.SINGLE);
 		    GridData data = new GridData(GridData.FILL_HORIZONTAL);
 		    usernameField.setLayoutData(data);
 
 		    Label passwordLabel = new Label(comp, SWT.RIGHT);
-		    passwordLabel.setText("Contraseña: ");
+		    passwordLabel.setText("Contrase√±a: ");
 
 		    passwordField = new Text(comp, SWT.SINGLE | SWT.PASSWORD);
 		    data = new GridData(GridData.FILL_HORIZONTAL);
@@ -111,7 +111,7 @@ public class Ingreso extends Dialog {
 			} catch (IOException e) {
 				LOGGER.info("NO TIENE CONECCION A INTERNET!!");
 				IStatus status=new Status(IStatus.ERROR,"Plugin ID","Ud. debe conectarse a internet",e);
-				ErrorDialog.openError(this.getParentShell(), "SIN INTERNET", "Este programa requiere conexión a internet", status);
+				ErrorDialog.openError(this.getParentShell(), "SIN INTERNET", "Este programa requiere conexi√≥n a internet", status);
 				this.getParentShell().dispose();
 				System.exit(0);
 			} catch (NoSuchAlgorithmException e) {
