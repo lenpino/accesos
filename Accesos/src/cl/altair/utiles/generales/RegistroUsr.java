@@ -59,7 +59,7 @@ public class RegistroUsr {
 		elPrograma.setSerial(new BigInteger(serie));
 		elPrograma.setVersion(version);
 		elPrograma.setActivacion(new Date(fechaActual.getTime()));				
-		elPrograma.setEstado("activado");
+		elPrograma.setEstado("activo");
 		//Graba informacion del programa en la base de datos
 		EntityManagerHelper.beginTransaction();
 		pdao.save(elPrograma);

@@ -96,6 +96,7 @@ public class Ingreso extends Dialog {
 				    	if(PasswordHash.validatePassword(passwordField.getText(), clave)){
 				    		System.out.println("CLAVES COINCIDEN");
 				    		super.buttonPressed(buttonId);
+				    		return;
 				    	} else {
 							LOGGER.info("Clave ingresada no corresponde");
 							IStatus status=new Status(IStatus.ERROR,"Plugin ID","La clave no es correcta",null);
