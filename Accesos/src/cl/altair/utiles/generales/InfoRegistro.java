@@ -23,6 +23,8 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
+
+import cl.miempresa.accesos.principal.Main;
 public class InfoRegistro {
 	private static String clave;
 	private static String serie;
@@ -47,10 +49,10 @@ public class InfoRegistro {
 	    return null;
     }
 
-    public static void getInfoRegistro(String email, String password) throws IOException{
+    public static int getInfoRegistro(String email, String password) throws IOException{
         try {
 			HttpClient client = new DefaultHttpClient();
-			HttpGet request = new HttpGet("http://" + HOST_NAME + "/sia/rest-services/usuario/cliente/" + email);
+			HttpGet request = new HttpGet("http://" + Main.p.getProperty("host") + "/rest-services/usuario/cliente/" + email);
 			HttpResponse response = client.execute(request);
 			//Lee la respuesta
 			BufferedReader rd = new BufferedReader (new InputStreamReader(response.getEntity().getContent()));
@@ -86,15 +88,16 @@ public class InfoRegistro {
 		    		System.out.println("CLAVES COINCIDEN");
 		    		RegistroUsr.registraUsr(email);
 		    		RegistroUsr.registraPrograma(serie, ver);
+		    		return 0;
 		    	} else {
 		    		System.out.println("CLAVES NO COINCIDEN");
-		    	}
-		    	
-
+		    		return 1;
+		    	}		    	
 			} else {
 				XPathExpression mensaje = xpath.compile("//mensaje/text()");
 				String elMensaje = (String)mensaje.evaluate(resp, XPathConstants.STRING);
 				System.out.println("MENSAJE = " + elMensaje);
+				return 2;
 			}
 			
 		} catch (IllegalStateException e) {
@@ -108,6 +111,7 @@ public class InfoRegistro {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} 
+        return 0;
     }
     
 	public static String getClave() {

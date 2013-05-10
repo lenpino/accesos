@@ -5,6 +5,7 @@ package cl.miempresa.accesos.principal;
 
 import java.io.FileInputStream;
 import java.util.List;
+import java.util.Properties;
 import java.util.logging.LogManager;
 import java.util.logging.Logger;
 
@@ -44,6 +45,8 @@ import cl.altair.acceso.modelo.Programa;
 import cl.altair.accesos.principal.formularios.ConfiguraEdificio;
 import cl.altair.accesos.principal.formularios.Ingreso;
 import cl.altair.accesos.principal.formularios.NewDependencia;
+import cl.altair.accesos.principal.formularios.NuevoUsuario;
+import cl.altair.accesos.principal.formularios.TestView;
 import cl.altair.accesos.wizard.UsuarioInmueble.WizardUsuarioInmueble;
 import cl.altair.accesos.wizard.edificio.WizardEdificio;
 
@@ -58,6 +61,8 @@ public class Main {
 
 	protected static Shell shlGestion;
 	private static Edificio edificio;
+	public static Properties p = new Properties();
+	private static final String ARCHIVO_CONF = "init.properties";
 	private ListaAccesos listado;
 	private final static Logger LOGGER = Logger.getLogger(Main.class.getName());
 	private ArbolEdificio elArbolEdificio;
@@ -260,6 +265,17 @@ public class Main {
 		});
 		mntmConfiguraEdificio.setText("Configura Edificio...");
 
+		MenuItem mntmCreaUsuarios = new MenuItem(menu_2, SWT.NONE);
+		mntmCreaUsuarios.setText("Crea Usuarios...");
+		mntmCreaUsuarios.addSelectionListener(new SelectionAdapter(){
+			public void widgetSelected(SelectionEvent e){
+				NuevoUsuario test = new NuevoUsuario(shlGestion);
+				test.create();
+				test.getShell().setSize(390, 350);
+				test.open();
+			}
+		});
+		
 	}
 
 	public Edificio getEdificio() {
@@ -332,10 +348,11 @@ public class Main {
 	static {
 		try{
 			FileInputStream fis = new FileInputStream("log.properties");
+			p.load(new FileInputStream(ARCHIVO_CONF));
 			LogManager.getLogManager().readConfiguration(fis);
 			fis.close();
 		} catch(Exception e){
-			System.out.println("Error al cargar archivo de propiedades de logs " + e.getMessage());
+			System.out.println("Error al cargar archivos de configuracion del aplicativo " + e.getMessage());
 		}
 	}
 }

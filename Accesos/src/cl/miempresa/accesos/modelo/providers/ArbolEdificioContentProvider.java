@@ -44,11 +44,16 @@ public class ArbolEdificioContentProvider implements ITreeContentProvider {
 
 	@Override
 	public boolean hasChildren(Object element) {
+		//Se asume que el edificio ya tiene creada la lista de pisos
 		if(element instanceof Edificio){
 			return true;
 		} 
 		if (element instanceof Piso) {
-			return true;
+			//Si el piso aun no cuenta con dependencias entonces no se pinta el icono para expandir
+			if(((Piso) element).getDependencias().isEmpty())
+				return false;
+			else
+				return true;
 		}
 		return false;
 	}
