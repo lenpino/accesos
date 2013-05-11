@@ -46,7 +46,6 @@ import cl.altair.accesos.principal.formularios.ConfiguraEdificio;
 import cl.altair.accesos.principal.formularios.Ingreso;
 import cl.altair.accesos.principal.formularios.NewDependencia;
 import cl.altair.accesos.principal.formularios.NuevoUsuario;
-import cl.altair.accesos.principal.formularios.TestView;
 import cl.altair.accesos.wizard.UsuarioInmueble.WizardUsuarioInmueble;
 import cl.altair.accesos.wizard.edificio.WizardEdificio;
 

@@ -29,7 +29,6 @@ public class InfoRegistro {
 	private static String clave;
 	private static String serie;
 	private static String ver;
-	private static final String HOST_NAME = "ec2-54-244-178-197.us-west-2.compute.amazonaws.com";
 	private final static Logger LOGGER = Logger.getLogger(InfoRegistro.class.getName());
     public static void main(String[] args) throws ClientProtocolException, IOException {
     	InfoRegistro.getInfoRegistro("lenpino@gmail.com","123456");
