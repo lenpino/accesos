@@ -1,5 +1,11 @@
 package cl.altair.accesos.principal.formularios;
 
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 import org.eclipse.jface.fieldassist.ControlDecoration;
 import org.eclipse.jface.fieldassist.FieldDecoration;
 import org.eclipse.jface.fieldassist.FieldDecorationRegistry;
@@ -30,8 +36,17 @@ import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.wb.swt.SWTResourceManager;
 import org.eclipse.swt.graphics.Point;
 
+import cl.altair.acceso.dao.EntityManagerHelper;
+import cl.altair.acceso.dao.RolDAO;
+import cl.altair.acceso.dao.UsuarioDAO;
+import cl.altair.acceso.modelo.Rol;
+import cl.altair.acceso.modelo.Usuario;
+import cl.altair.utiles.generales.PasswordHash;
+import cl.miempresa.accesos.principal.Main;
+
 public class NuevoUsuario extends FormDialog {
-	private Text text_1;
+	private Text correo;
+	private Text clave;
 	private Text txtNewText;
 	private Text txtNewText_1;
 	private Text txtNewText_2;
@@ -44,7 +59,44 @@ public class NuevoUsuario extends FormDialog {
 	}
 	  
 	protected void okPressed(){
-		System.out.println("OK presionado");
+		try {
+			//fecha actual
+			java.util.Date utilDate = new java.util.Date();
+			long lnMilisegundos = utilDate.getTime();
+			
+			RolDAO rdao = new RolDAO();
+			UsuarioDAO udao = new UsuarioDAO();
+			Usuario unUsuario = new Usuario();
+			Rol conserje;
+			List<Rol> roles = rdao.findByNombre("Conserje");
+			if(roles.isEmpty()){
+				conserje = new Rol();
+				conserje.setNombre("Conserje");
+				//Inserta el rol de conserje si no existe
+				EntityManagerHelper.beginTransaction();
+				rdao.save(conserje);
+				EntityManagerHelper.commit();
+				EntityManagerHelper.closeEntityManager();
+			} else {
+				conserje = roles.get(0);
+			}
+			unUsuario.setClave(PasswordHash.createHash(clave.getText()));
+			unUsuario.setLogin(correo.getText());
+			unUsuario.setEstado("activo");
+			unUsuario.setFechaingreso(new java.sql.Date(lnMilisegundos));
+			unUsuario.getRoles().add(conserje);
+			//Inserta el rol de conserje si no existe
+			EntityManagerHelper.beginTransaction();
+			udao.save(unUsuario);
+			EntityManagerHelper.commit();
+			EntityManagerHelper.closeEntityManager();
+			
+		} catch (NoSuchAlgorithmException e) {
+			e.printStackTrace();
+		} catch (InvalidKeySpecException e) {
+			e.printStackTrace();
+		}
+		
 		if(valida)
 			super.okPressed();
 	}
@@ -64,23 +116,23 @@ public class NuevoUsuario extends FormDialog {
             gd.horizontalSpan = 2;
             Label lblEmailUsuario = new Label(form.getBody(), SWT.NULL);
             lblEmailUsuario.setText("Email Usuario:");
-            final Text text = new Text(form.getBody(), SWT.BORDER);
+            correo = new Text(form.getBody(), SWT.BORDER);
             GridData gd_text = new GridData(GridData.FILL_HORIZONTAL);
             gd_text.widthHint = 265;
             gd_text.grabExcessHorizontalSpace = false;
-            text.setLayoutData(gd_text);
+            correo.setLayoutData(gd_text);
             
             //Crea icono de decoracion de error y mensaje para el error
-    		final ControlDecoration controlDecoration = new ControlDecoration(text, SWT.LEFT | SWT.TOP);
+    		final ControlDecoration controlDecoration = new ControlDecoration(correo, SWT.LEFT | SWT.TOP);
     		FieldDecoration fieldDecoration = FieldDecorationRegistry.getDefault().getFieldDecoration(FieldDecorationRegistry.DEC_ERROR);
     		controlDecoration.setImage(fieldDecoration.getImage());
     		controlDecoration.hide();
     		
     		//Valida el campo de correo al terminar su edicion
-		    text.addListener(SWT.FocusOut, new Listener() {
+		    correo.addListener(SWT.FocusOut, new Listener() {
 		    	public void handleEvent(Event e) {
-		    		if(!org.apache.commons.validator.routines.EmailValidator.getInstance().isValid(text.getText())){
-		    			text.setFocus();
+		    		if(!org.apache.commons.validator.routines.EmailValidator.getInstance().isValid(correo.getText())){
+		    			correo.setFocus();
 		    			controlDecoration.show();
 		    			controlDecoration.showHoverText("Correo incorrecto");
 		    		} else {
@@ -90,7 +142,7 @@ public class NuevoUsuario extends FormDialog {
 		        }
 		    });
 		    //Se esconde el error al volver a editar el campo
-			text.addModifyListener(new ModifyListener() {
+			correo.addModifyListener(new ModifyListener() {
 		    	public void modifyText(ModifyEvent event) {
 		    		controlDecoration.hide();
 		    	}
@@ -102,23 +154,23 @@ public class NuevoUsuario extends FormDialog {
             managedForm.getToolkit().adapt(lblClaveUsuario, true, true);
             lblClaveUsuario.setText("Clave Usuario:");
             
-            text_1 = new Text(form.getBody(), SWT.BORDER | SWT.PASSWORD);
+            clave = new Text(form.getBody(), SWT.BORDER | SWT.PASSWORD);
             GridData gd_text_1 = new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1);
             gd_text_1.widthHint = 265;
-            text_1.setLayoutData(gd_text_1);
-            managedForm.getToolkit().adapt(text_1, true, true);
+            clave.setLayoutData(gd_text_1);
+            managedForm.getToolkit().adapt(clave, true, true);
 
             //Crea icono de decoracion de error y mensaje para el error
-    		final ControlDecoration decopwd = new ControlDecoration(text_1, SWT.LEFT | SWT.TOP);
+    		final ControlDecoration decopwd = new ControlDecoration(clave, SWT.LEFT | SWT.TOP);
     		FieldDecoration campopwd = FieldDecorationRegistry.getDefault().getFieldDecoration(FieldDecorationRegistry.DEC_ERROR);
     		controlDecoration.setImage(campopwd.getImage());
     		controlDecoration.hide();
 
-    		//Valida el campo de correo al terminar su edicion
-		    text_1.addListener(SWT.FocusOut, new Listener() {
+    		//Valida el campo de email al terminar su edicion
+		    clave.addListener(SWT.FocusOut, new Listener() {
 		    	public void handleEvent(Event e) {
-		    		if(text_1.getText().length() < 8){
-		    			text_1.setFocus();
+		    		if(clave.getText().length() < 8){
+		    			clave.setFocus();
 		    			decopwd.show();
 		    			decopwd.showHoverText("La clave debe poseer al menos 8 caracteres");
 		    		} else {
@@ -128,7 +180,7 @@ public class NuevoUsuario extends FormDialog {
 		        }
 		    });
 		    //Se esconde el error al volver a editar el campo
-			text_1.addModifyListener(new ModifyListener() {
+			clave.addModifyListener(new ModifyListener() {
 		    	public void modifyText(ModifyEvent event) {
 		    		decopwd.hide();
 		    	}
@@ -190,6 +242,7 @@ public class NuevoUsuario extends FormDialog {
         	txtNewText_2.setText("");
         	managedForm.getForm().setMinSize(new Point(400, 300));
         	tooltip.setPopupDelay(2);
+
             
 	    } catch (Exception e) {
 	            System.out.println("Error");

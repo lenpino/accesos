@@ -30,6 +30,7 @@ import cl.altair.acceso.modelo.Programa;
 import cl.altair.acceso.modelo.Usuario;
 import cl.altair.utiles.generales.InfoRegistro;
 import cl.altair.utiles.generales.PasswordHash;
+import cl.miempresa.accesos.principal.Main;
 
 public class Ingreso extends Dialog {
 	private static final int RESET_ID = IDialogConstants.NO_TO_ALL_ID + 1;
@@ -113,9 +114,11 @@ public class Ingreso extends Dialog {
 						    passwordField.setText("");
 			    		} else {
 			    			String clave = listaUsuarios.get(0).getClave();
-							//Valida la clave local versus la del portal
+							//Valida la clave local versus la del portal, si esta correcta el programa prosigue
 					    	if(PasswordHash.validatePassword(passwordField.getText(), clave)){
-					    		System.out.println("CLAVES COINCIDEN");
+					    		LOGGER.info("CLAVES COINCIDEN");
+					    		//Asigna el usuario conectado
+					    		Main.usuarioActivo = listaUsuarios.get(0);
 					    		super.buttonPressed(buttonId);
 					    		return;
 					    	} else {
@@ -126,7 +129,7 @@ public class Ingreso extends Dialog {
 					    	}	
 			    		}
 		    		} else {
-			    		//Llamando al portal
+			    		//Llamando al portal para el primer ingreso
 						int rc = InfoRegistro.getInfoRegistro(usernameField.getText(), passwordField.getText());
 						switch(rc){
 							case 1:{

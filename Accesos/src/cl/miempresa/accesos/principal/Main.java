@@ -6,6 +6,7 @@ package cl.miempresa.accesos.principal;
 import java.io.FileInputStream;
 import java.util.List;
 import java.util.Properties;
+import java.util.Set;
 import java.util.logging.LogManager;
 import java.util.logging.Logger;
 
@@ -42,6 +43,8 @@ import cl.altair.acceso.dao.TipoDependenciaDAO;
 import cl.altair.acceso.modelo.Edificio;
 import cl.altair.acceso.modelo.Motivo;
 import cl.altair.acceso.modelo.Programa;
+import cl.altair.acceso.modelo.Rol;
+import cl.altair.acceso.modelo.Usuario;
 import cl.altair.accesos.principal.formularios.ConfiguraEdificio;
 import cl.altair.accesos.principal.formularios.Ingreso;
 import cl.altair.accesos.principal.formularios.NewDependencia;
@@ -61,6 +64,8 @@ public class Main {
 	protected static Shell shlGestion;
 	private static Edificio edificio;
 	public static Properties p = new Properties();
+	public static Usuario usuarioActivo;
+	public static boolean esAdm = false;
 	private static final String ARCHIVO_CONF = "init.properties";
 	private ListaAccesos listado;
 	private final static Logger LOGGER = Logger.getLogger(Main.class.getName());
@@ -107,6 +112,17 @@ public class Main {
    
 		init();
 		
+		Set<Rol> roles = Main.usuarioActivo.getRoles();
+		if(roles.isEmpty()){
+			System.out.println("Usuario no tiene roles");
+		} else {
+			Rol elRol = (Rol) roles.toArray()[0];
+			if(elRol.getNombre().equalsIgnoreCase("Administrador")){
+				Main.esAdm = true;
+				LOGGER.info("El usuario es administrador");
+			}
+		}
+		
 		Composite composite = new Composite(shlGestion, SWT.BORDER);
 		composite.setLayout(new BorderLayout(0, 0));
 		
@@ -132,6 +148,7 @@ public class Main {
 		
 		//Boton para activar el dialogo de la nueva dependencia
 		ToolItem tltmNewItem = new ToolItem(toolBar_3, SWT.NONE);
+		tltmNewItem.setEnabled(esAdm);
 		tltmNewItem.setImage(SWTResourceManager.getImage(Main.class, "/com/altair/accesos/recursos/Button-Add-icon.png"));
 		tltmNewItem.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -172,6 +189,7 @@ public class Main {
 	    tltmBuscar.addSelectionListener(listenerBuscar);
 */	    
 		ToolItem tltmAgregarEmpresa = new ToolItem(toolBar_2, SWT.NONE);
+		tltmAgregarEmpresa.setEnabled(esAdm);
 		tltmAgregarEmpresa.setImage(SWTResourceManager.getImage(Main.class, "/com/altair/accesos/recursos/Button-Add-icon.png"));
 		tltmAgregarEmpresa.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -237,6 +255,7 @@ public class Main {
 		shlGestion.setMenuBar(menu);
 		
 		MenuItem mntmArchivo = new MenuItem(menu, SWT.CASCADE);
+		mntmArchivo.setEnabled(esAdm);
 		mntmArchivo.setText("Archivo");
 		
 		Menu menu_1 = new Menu(mntmArchivo);
@@ -249,6 +268,7 @@ public class Main {
 		mntmExportaDatosEdificio.setText("Exporta Datos Edificio...");
 		
 		MenuItem mntmConfiguracin = new MenuItem(menu, SWT.CASCADE);
+		mntmConfiguracin.setEnabled(esAdm);
 		mntmConfiguracin.setText("Configuraci\u00F3n");
 		
 		Menu menu_2 = new Menu(mntmConfiguracin);
